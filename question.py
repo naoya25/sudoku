@@ -1,14 +1,10 @@
+# v4ベースで作成
 class Question:
-    def __init__(self):
-        # https://rocketnews24.com/2012/07/03/22654/
-        self.q_str = (
-            "800000000003600000070090200050007000000045700000100030001000068008500010090000400"
-        )
+    def __init__(self, s: str):
+        self.q_str: str = s
+        self.q_ans: list = []
 
-    def set_q_str(self, s):
-        self.q_str = s
-
-    def display_s(self, s):
+    def display_s(self, s: str) -> None:
         print("+-------+-------+-------+")
         for i in range(9):
             b1 = " ".join(map(lambda x: "." if x == "0" else x, s[i * 9 : i * 9 + 3]))
@@ -19,7 +15,7 @@ class Question:
                 print("+-------+-------+-------+")
 
     # self.q_strの全マスチェック
-    def check_all(self):
+    def check_all(self) -> bool:
         # 横
         for i in range(9):
             ss = self.q_str[i * 9 : (i + 1) * 9]
@@ -41,7 +37,7 @@ class Question:
         return True
 
     # sのi番目のみチェック
-    def check_i(self, s, i):
+    def check_i(self, s: str, i: int) -> bool:
         # 横
         r = i // 9
         ss = s[r * 9 : (r + 1) * 9]
@@ -61,7 +57,7 @@ class Question:
         return True
 
     # 探索時に選択肢の少ないものの位置とその選択肢を計算
-    def find_next(self, s):
+    def find_next(self, s: str) -> (int, set):
         i, max_n, cannot_set = 0, 0, set()
         for k in range(81):
             if s[k] != "0":
@@ -80,7 +76,7 @@ class Question:
         return i, set(map(str, range(1, 10))) - cannot_set
 
     # dfsで解答作成
-    def get_ans(self):
+    def get_set_ans(self) -> list:
         ans = []
         stack = [(0, self.q_str)]
         while stack:
@@ -94,4 +90,20 @@ class Question:
             for j in next_options:
                 new_t = t[:k] + j + t[k + 1 :]
                 stack.append((i + 1, new_t))
+        self.q_ans = ans
         return ans
+
+
+def main():
+    q = Question(
+        s="800000000003600000070090200050007000000045700000100030001000068008500010090000400",
+    )
+    q.get_set_ans()
+    for a in q.q_ans:
+        q.display_s(a)
+
+    return
+
+
+if __name__ == "__main__":
+    main()
