@@ -18,7 +18,7 @@ def main():
 
         if i == 81:
             print(t)
-            print("正解" if t == q.ans else "不正解")
+            print("正解" if t in q.get_ans() else "不正解")
             continue
 
         if t[i] != "0":
