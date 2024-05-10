@@ -1,4 +1,5 @@
 from question import Question
+import time
 
 
 def main():
@@ -10,6 +11,7 @@ def main():
         return
 
     # dfs
+    s_t = time.time()
     stack = [(0, q_str)]
     while stack:
         i, t = stack.pop()
@@ -26,6 +28,8 @@ def main():
             new_t = t[:i] + str(j) + t[i + 1 :]
             if check(new_t):
                 stack.append((i + 1, new_t))
+    e_t = time.time()
+    print(f"タイム: {e_t - s_t}s")
 
 
 def check(s):
