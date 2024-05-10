@@ -3,16 +3,6 @@ import time
 
 
 def main():
-    # def dfs(i, t):  # 全探索を行う部分です
-    #     if i == q_str.count("0"):
-    #         print(t)
-    #     else:
-    #         k = find_next(t)
-    #         for j in range(1, 10):
-    #             t_ = t[:k] + str(j) + t[k + 1 :]
-    #             if check_i(t_, k):
-    #                 dfs(i + 1, t_)
-
     q = Question()
     q_str = q.q_str
 
@@ -85,8 +75,7 @@ def check_i(s, i):
 
 
 def find_next(s):
-    i = 0
-    max_n = 0
+    i, max_n = 0, 0
     for k in range(81):
         if s[k] != "0":
             continue
@@ -94,6 +83,7 @@ def find_next(s):
         r_arr = list(s[k // 9 * 9 : k // 9 * 9 + 9])  # 横
         c_arr = [s[k % 9 + 9 * j] for j in range(9)]  # 縦
         b_arr = [s[k // 27 * 27 + k % 9 // 3 * 3 + j // 3 * 9 + j % 3] for j in range(9)]  # 3x3
+
         n = len(set(r_arr + c_arr + b_arr))
         if max_n < n:
             max_n = n
