@@ -1,4 +1,5 @@
 import random
+import time
 
 
 # v4ベースで作成
@@ -152,15 +153,20 @@ def create_questions(q):
 def main():
     q = Sudoku()
     i = 0
+    n = 1000
+    s_t = time.time()
     with open("questions.txt", "w") as f:
-        while i < 10:
+        while i < n:
             q_ans, q_str = create_questions(q)
             f.write(f"{i}\t")
             f.write(f"blank: {q_str.count('0')}\t")
             f.write(f"{q_ans}\t")
             f.write(f"{q_str}\n")
             print(f"< {i} > blank: {q_str.count('0')}")
+            if i % 10 == 9:
+                print(f"time: {time.time() - s_t}")
             i += 1
+    print(f"計算終了 time: {time.time()-s_t}")
 
 
 if __name__ == "__main__":
