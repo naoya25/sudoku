@@ -3,6 +3,7 @@ class Question:
     def __init__(self, s: str):
         self.q_str: str = s
         self.q_ans: list = []
+        self.get_set_ans()
 
     def display_s(self, s: str) -> None:
         print("+-------+-------+-------+")
@@ -98,7 +99,6 @@ def main():
     q = Question(
         s="800000000003600000070090200050007000000045700000100030001000068008500010090000400",
     )
-    q.get_set_ans()
     for a in q.q_ans:
         q.display_s(a)
 
