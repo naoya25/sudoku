@@ -28,7 +28,3 @@ def get_questions() -> list:
     #         continue
     #     print(f"blank: {k} --> {v}  {round(v / len(questions) * 100, 2)}%")
     return questions
-
-
-if __name__ == "__main__":
-    main()
