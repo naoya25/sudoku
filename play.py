@@ -31,8 +31,6 @@ def play_game():
     while user_ans.count("0") > 0:
         print(f"< {t} >")
         s = input("縦 横 値 を入力してください -> ")
-        if not s.strip():
-            continue
         if s == "a":
             q.display_s(q.q_ans)
             return
@@ -44,21 +42,31 @@ def play_game():
             c = i % 9
             print(f"{r} {c} {q.q_ans[i]} ←これ入力してみてね！！")
             continue
-
-        r, c, num = map(int, s.split())
+        try:
+            r, c, num = map(int, s.split())
+        except:
+            print("正しい入力か確かめてください")
+            continue
         if not (0 <= r < 9 and 0 <= c < 9 and 1 <= num < 10):
             print("正しい値を入力してね")
             continue
         i = r * 9 + c
+        if user_ans[i] != "0":
+            print("すでに値が入ってるよ！")
+            continue
         if q.q_ans[i] == str(num):
             print("正解!")
             user_ans = user_ans[:i] + str(num) + user_ans[i + 1 :]
             q.display_s(user_ans)
+
+            rem = " ".join(["-" if user_ans.count(str(j)) == 9 else str(j) for j in range(1, 10)])
+            print(f"残り: {rem}")
         else:
             print("残念")
         t += 1
     print("正解 !!!\nおめでとう !!!")
-    print(f"タイム: {time.time() - s_t}")
+    score = int(time.time() - s_t)
+    print(f"タイム: {score // 60}:{score % 60}")
     return
 
 
