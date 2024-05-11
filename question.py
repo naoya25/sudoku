@@ -2,11 +2,10 @@ import random
 
 
 # v4ベースで作成
-class Question:
-    def __init__(self, s: str):
-        self.q_str: str = s
+class Sudoku:
+    def __init__(self):
+        self.q_str: str = ""
         self.q_ans: list = []
-        self.get_set_ans()
 
     def set_q_str(self, s: str):
         self.q_str: str = s
@@ -100,31 +99,68 @@ class Question:
         self.q_ans = ans
         return ans
 
-    def create_q(self) -> str:
-        stack = [(0, self.q_str)]
+    # 新しい問題作成時の初期配置を生成
+    def get_init_grid(self) -> str:
+        s = ""
+        arr = list(map(str, range(1, 10)))
+        random.shuffle(arr)
+        s += "".join(arr[:3]) + "0" * 6
+        s += "".join(arr[3:6]) + "0" * 6
+        s += "".join(arr[6:]) + "0" * 6
+        random.shuffle(arr)
+        s += "0" * 3 + "".join(arr[:3]) + "0" * 3
+        s += "0" * 3 + "".join(arr[3:6]) + "0" * 3
+        s += "0" * 3 + "".join(arr[6:]) + "0" * 3
+        random.shuffle(arr)
+        s += "0" * 6 + "".join(arr[:3])
+        s += "0" * 6 + "".join(arr[3:6])
+        s += "0" * 6 + "".join(arr[6:])
+        return s
+
+    def create_new_ans(self) -> str:
+        stack = [(0, self.get_init_grid())]
         while stack:
             i, t = stack.pop()
 
-            if i == self.q_str.count("0"):
-                break
+            if t.count("0") == 0:
+                return t
 
             k, next_options = self.find_next(t)
             for j in next_options:
                 new_t = t[:k] + j + t[k + 1 :]
                 stack.append((i + 1, new_t))
-        return t
+        return 0
+
+
+def create_questions(q):
+    new_ans = q.create_new_ans()
+
+    # 穴開けていく
+    new_q = new_ans
+    i_arr = list(range(81))
+    random.shuffle(i_arr)
+    for i in i_arr:
+        next_s = new_q[:i] + "0" + new_q[i + 1 :]
+        q.set_q_str(s=next_s)
+        ans_arr = q.get_set_ans()
+        if len(ans_arr) == 1:
+            new_q = next_s
+
+    return new_ans, new_q
 
 
 def main():
-    s = "123456789" + "0" * 72
-    arr = list(s)
-    random.shuffle(arr)
-    q = Question(s="".join(arr))
-    new_q = q.create_q()
-    print("新しい問題を作成しました")
-    q.display_s(new_q)
-
-    return
+    q = Sudoku()
+    i = 0
+    with open("questions.txt", "w") as f:
+        while i < 10:
+            q_ans, q_str = create_questions(q)
+            f.write(f"{i}\t")
+            f.write(f"blank: {q_str.count('0')}\t")
+            f.write(f"{q_ans}\t")
+            f.write(f"{q_str}\n")
+            print(f"< {i} > blank: {q_str.count('0')}")
+            i += 1
 
 
 if __name__ == "__main__":
