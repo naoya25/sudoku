@@ -1,9 +1,15 @@
+import random
+
+
 # v4ベースで作成
 class Question:
     def __init__(self, s: str):
         self.q_str: str = s
         self.q_ans: list = []
         self.get_set_ans()
+
+    def set_q_str(self, s: str):
+        self.q_str: str = s
 
     def display_s(self, s: str) -> None:
         print("+-------+-------+-------+")
@@ -76,7 +82,7 @@ class Question:
                 cannot_set = now_set
         return i, set(map(str, range(1, 10))) - cannot_set
 
-    # dfsで解答作成
+    # dfsですべての解答を取得
     def get_set_ans(self) -> list:
         ans = []
         stack = [(0, self.q_str)]
@@ -94,13 +100,29 @@ class Question:
         self.q_ans = ans
         return ans
 
+    def create_q(self) -> str:
+        stack = [(0, self.q_str)]
+        while stack:
+            i, t = stack.pop()
+
+            if i == self.q_str.count("0"):
+                break
+
+            k, next_options = self.find_next(t)
+            for j in next_options:
+                new_t = t[:k] + j + t[k + 1 :]
+                stack.append((i + 1, new_t))
+        return t
+
 
 def main():
-    q = Question(
-        s="800000000003600000070090200050007000000045700000100030001000068008500010090000400",
-    )
-    for a in q.q_ans:
-        q.display_s(a)
+    s = "123456789" + "0" * 72
+    arr = list(s)
+    random.shuffle(arr)
+    q = Question(s="".join(arr))
+    new_q = q.create_q()
+    print("新しい問題を作成しました")
+    q.display_s(new_q)
 
     return
 
