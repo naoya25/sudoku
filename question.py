@@ -166,7 +166,7 @@ def main():
             if i % 10 == 9:
                 print(f"time: {time.time() - s_t}")
             i += 1
-    print(f"計算終了 time: {time.time()-s_t}")
+    print(f"計算終了 time: {time.time() - s_t}")
 
 
 if __name__ == "__main__":
