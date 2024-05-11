@@ -11,15 +11,19 @@ class Sudoku:
     def set_q_str(self, s: str):
         self.q_str: str = s
 
+    def set_ans(self, s: str):
+        self.q_ans = s
+
     def display_s(self, s: str) -> None:
-        print("+-------+-------+-------+")
+        print("   0 1 2   3 4 5   6 7 8")
+        print("-+-------+-------+-------+")
         for i in range(9):
             b1 = " ".join(map(lambda x: "." if x == "0" else x, s[i * 9 : i * 9 + 3]))
             b2 = " ".join(map(lambda x: "." if x == "0" else x, s[i * 9 + 3 : i * 9 + 6]))
             b3 = " ".join(map(lambda x: "." if x == "0" else x, s[i * 9 + 6 : i * 9 + 9]))
-            print(f"| {b1} | {b2} | {b3} |")
+            print(f"{i}| {b1} | {b2} | {b3} |")
             if i % 3 == 2:
-                print("+-------+-------+-------+")
+                print(" +-------+-------+-------+")
 
     # self.q_strの全マスチェック
     def check_all(self) -> bool:
@@ -83,13 +87,13 @@ class Sudoku:
         return i, set(map(str, range(1, 10))) - cannot_set
 
     # dfsですべての解答を取得
-    def get_set_ans(self) -> list:
+    def get_ans(self) -> list:
         ans = []
         stack = [(0, self.q_str)]
         while stack:
             i, t = stack.pop()
 
-            if i == self.q_str.count("0"):
+            if t.count("0") == 0:
                 ans.append(t)
                 continue
 
@@ -97,7 +101,6 @@ class Sudoku:
             for j in next_options:
                 new_t = t[:k] + j + t[k + 1 :]
                 stack.append((i + 1, new_t))
-        self.q_ans = ans
         return ans
 
     # 新しい問題作成時の初期配置を生成
@@ -132,41 +135,46 @@ class Sudoku:
                 stack.append((i + 1, new_t))
         return 0
 
+    # 新しい問題を1問生成する
+    def create_question(self):
+        new_ans = self.create_new_ans()
 
-def create_questions(q):
-    new_ans = q.create_new_ans()
+        # 穴開けていく
+        new_q = new_ans
+        i_arr = list(range(81))
+        random.shuffle(i_arr)
+        for i in i_arr:
+            next_s = new_q[:i] + "0" + new_q[i + 1 :]
+            self.set_q_str(s=next_s)
+            ans_arr = self.get_ans()
+            if len(ans_arr) == 1:
+                new_q = next_s
 
-    # 穴開けていく
-    new_q = new_ans
-    i_arr = list(range(81))
-    random.shuffle(i_arr)
-    for i in i_arr:
-        next_s = new_q[:i] + "0" + new_q[i + 1 :]
-        q.set_q_str(s=next_s)
-        ans_arr = q.get_set_ans()
-        if len(ans_arr) == 1:
-            new_q = next_s
-
-    return new_ans, new_q
+        self.q_str = new_q
+        self.q_ans = new_ans
 
 
-def main():
+# 新しい問題をn問生成
+def create_n_questions(n: int = 1000) -> None:
+    s_t = time.time()
     q = Sudoku()
     i = 0
-    n = 1000
-    s_t = time.time()
     with open("questions.txt", "w") as f:
         while i < n:
-            q_ans, q_str = create_questions(q)
+            q.create_question()
             f.write(f"{i}\t")
-            f.write(f"blank: {q_str.count('0')}\t")
-            f.write(f"{q_ans}\t")
-            f.write(f"{q_str}\n")
-            print(f"< {i} > blank: {q_str.count('0')}")
+            f.write(f"blank: {q.q_str.count('0')}\t")
+            f.write(f"{q.q_ans}\t")
+            f.write(f"{q.q_str}\n")
+            print(f"< {i} > blank: {q.q_str.count('0')}")
             if i % 10 == 9:
                 print(f"time: {time.time() - s_t}")
             i += 1
     print(f"計算終了 time: {time.time() - s_t}")
+
+
+def main():
+    create_n_questions(10)
 
 
 if __name__ == "__main__":
